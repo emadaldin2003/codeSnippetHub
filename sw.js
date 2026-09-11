@@ -1,19 +1,22 @@
 // sw.js - Service Worker الخاص بـ Code Snippet Hub
-
-const CACHE_NAME = 'code-snippet-hub-v3'; // تغيير الإصدار لتحديث الكاش
+const CACHE_NAME = 'code-snippet-hub-v5';
 const urlsToCache = [
-    '/code-snippet-hub/',
-    '/code-snippet-hub/index.html',
-    '/code-snippet-hub/login.html',
-    '/code-snippet-hub/register.html',
-    '/code-snippet-hub/profile.html',
-    '/code-snippet-hub/books.html',     // صفحة الكتب الجديدة
-    '/code-snippet-hub/offline.html',
-    '/code-snippet-hub/css/style.css',
-    '/code-snippet-hub/js/app.js',
-    '/code-snippet-hub/js/auth.js',
-    '/code-snippet-hub/js/notifications.js',
-    '/code-snippet-hub/js/sw-register.js'
+    './',
+    './index.html',
+    './login.html',
+    './register.html',
+    './profile.html',
+    './books.html',
+    './add.html',
+    './offline.html',
+    './css/style.css',
+    './js/app.js',
+    './js/auth.js',
+    './js/notifications.js',
+    './js/sw-register.js',
+    './assets/icons/icon-72x72.png',
+    './assets/icons/icon-192x192.png',
+    './assets/icons/icon-512x512.png'
 ];
 
 // تثبيت الـ SW
@@ -24,6 +27,7 @@ self.addEventListener('install', event => {
                 console.log('تم فتح الكاش وتخزين الملفات');
                 return cache.addAll(urlsToCache);
             })
+            .then(() => self.skipWaiting())
     );
 });
 
@@ -39,7 +43,7 @@ self.addEventListener('activate', event => {
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
 });
 
@@ -49,7 +53,9 @@ self.addEventListener('fetch', event => {
         caches.match(event.request)
             .then(response => {
                 return response || fetch(event.request).catch(() => {
-                    return caches.match('/code-snippet-hub/offline.html');
+                    if (event.request.mode === 'navigate') {
+                        return caches.match('./offline.html');
+                    }
                 });
             })
     );
@@ -61,11 +67,11 @@ self.addEventListener('message', event => {
         const title = event.data.title || 'تنبيه من Code Snippet Hub';
         const options = {
             body: event.data.body || 'مرحباً! هذا إشعار محلي.',
-            icon: '/code-snippet-hub/assets/icons/icon-192x192.png',
-            badge: '/code-snippet-hub/assets/icons/icon-72x72.png',
+            icon: './assets/icons/icon-192x192.png',
+            badge: './assets/icons/icon-72x72.png',
             vibrate: [200, 100, 200],
             data: {
-                url: event.data.url || '/'
+                url: event.data.url || './'
             }
         };
         self.registration.showNotification(title, options);
@@ -76,6 +82,6 @@ self.addEventListener('message', event => {
 self.addEventListener('notificationclick', event => {
     event.notification.close();
     event.waitUntil(
-        clients.openWindow(event.notification.data.url || '/')
+        clients.openWindow(event.notification.data.url || './')
     );
 });
