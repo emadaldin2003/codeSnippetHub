@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B0E14" />
+    <title>الملف الشخصي - Code Snippet Hub</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/icons/icon-72x72.png" />
+
+    <style>
+        .profile-page {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .profile-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 0 4px var(--bg-primary), 0 0 0 6px var(--border-color);
+            transition: background 0.3s ease;
+            user-select: none;
+        }
+        .profile-name {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .profile-email {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 16px 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 24px;
+        }
+        .profile-stats .stat {
+            text-align: center;
+        }
+        .profile-stats .stat .number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .profile-stats .stat .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .profile-actions .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+        .avatar-edit-hint {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            cursor: pointer;
+        }
+        .avatar-edit-hint:hover {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                padding: 24px 18px;
+            }
+            .profile-stats {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط تنقل مبسط -->
+    <header class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <span class="logo-icon">&lt;/&gt;</span>
+            <span>Code Snippet Hub</span>
+        </a>
+        <div class="navbar-actions">
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">👤 <span class="user-name-display">مستخدم</span></span>
+            <button class="btn-icon" id="themeToggleProfile" title="تبديل السمة">🌙</button>
+        </div>
+    </header>
+
+    <div class="profile-page">
+        <div class="profile-card">
+            <div class="profile-avatar" id="avatarElement" style="background: #6C63FF;">?</div>
+            <div class="profile-name user-name-display">مستخدم</div>
+            <div class="profile-email user-email-display">email@example.com</div>
+            <div class="avatar-edit-hint" id="changeAvatarHint">🔄 انقر لتغيير لون الصورة الرمزية</div>
+
+            <div class="profile-stats">
+                <div class="stat">
+                    <div class="number" id="snippetsCount">0</div>
+                    <div class="label">الأكواد</div>
+                </div>
+                <div class="stat">
+                    <div class="number" id="favoritesCount">0</div>
+                    <div class="label">المفضلة</div>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn btn-danger" id="profileLogoutBtn">🚪 تسجيل الخروج</button>
+                <a href="index.html" class="btn btn-outline">🏠 العودة للرئيسية</a>
+            </div>
+        </div>
+        <a href="index.html" class="back-link">← العودة إلى الأكواد</a>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/pwa-init.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // ============================================
+        // دالة عرض Toast (للصفحة الحالية)
+        // ============================================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ============================================
+        // تهيئة الصفحة
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = getCurrentUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            updateUIForAuth();
+            updateAvatar(user);
+            loadStats();
+            initTheme();
+
+            document.getElementById('profileLogoutBtn').addEventListener('click', function() {
+                if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                    logoutUser();
+                }
+            });
+
+            document.getElementById('changeAvatarHint').addEventListener('click', function() {
+                changeAvatarColor();
+            });
+
+            document.getElementById('themeToggleProfile').addEventListener('click', function() {
+                const isLight = document.body.classList.toggle('light-theme');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                this.textContent = isLight ? '☀️' : '🌙';
+                showLocalNotification('🎨 تغيير السمة', isLight ? 'تم التبديل إلى الوضع الفاتح' : 'تم التبديل إلى الوضع الليلي');
+            });
+        });
+
+        // ============================================
+        // دوال الصورة الرمزية (Avatar)
+        // ============================================
+        function getAvatarColor() {
+            let color = localStorage.getItem('avatarColor');
+            if (!color) {
+                color = generateRandomColor();
+                localStorage.setItem('avatarColor', color);
+            }
+            return color;
+        }
+
+        function generateRandomColor() {
+            const colors = [
+                '#6C63FF', '#34D399', '#F87171', '#FBBF24', '#60A5FA',
+                '#A78BFA', '#F472B6', '#34D399', '#FB923C', '#818CF8',
+                '#2DD4BF', '#E879F9', '#F97316', '#22D3EE'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function changeAvatarColor() {
+            const newColor = generateRandomColor();
+            localStorage.setItem('avatarColor', newColor);
+            const avatar = document.getElementById('avatarElement');
+            avatar.style.background = newColor;
+            showLocalNotification('🎨 تغيير اللون', 'تم تغيير لون الصورة الرمزية');
+            showToast('✅ تم تغيير لون الصورة الرمزية', 'success');
+        }
+
+        function updateAvatar(user) {
+            const avatar = document.getElementById('avatarElement');
+            const color = getAvatarColor();
+            avatar.style.background = color;
+            if (user && user.username) {
+                avatar.textContent = user.username.charAt(0).toUpperCase();
+            }
+        }
+
+        // ============================================
+        // تهيئة السمة
+        // ============================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeToggleProfile').textContent = '☀️';
+            } else {
+                document.body.classList.remove('light-theme');
+                document.getElementById('themeToggleProfile').textContent = '🌙';
+            }
+        }
+
+        // ============================================
+        // تحميل الإحصائيات
+        // ============================================
+        async function loadStats() {
+            const user = getCurrentUser();
+            if (!user) return;
+            try {
+                const res = await fetch('./php/api/get.php');
+                const data = await res.json();
+                if (data.success) {
+                    const snippets = data.snippets || [];
+                    const userSnippets = snippets.filter(s => s.user_id === user.id);
+                    const favorites = userSnippets.filter(s => s.is_favorite);
+                    document.getElementById('snippetsCount').textContent = userSnippets.length;
+                    document.getElementById('favoritesCount').textContent = favorites.length;
+                }
+            } catch (err) {
+                console.log('فشل تحميل الإحصائيات');
+            }
+        }
+    </script>
+
+</body>
+</html>

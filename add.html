@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B0E14" />
+    <title>إضافة كود جديد - Code Snippet Hub</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/icons/icon-72x72.png" />
+    <style>
+        /* تنسيق إضافي للصفحة المستقلة */
+        .add-page-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .add-page-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .add-page-header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .add-page-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .add-page-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+            resize: vertical;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .form-actions .btn {
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .form-actions .btn-primary {
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+        }
+        .form-actions .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+        .form-actions .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .form-actions .btn-outline:hover {
+            background: var(--bg-hover);
+        }
+        .error-msg {
+            color: var(--color-danger);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        .success-msg {
+            color: var(--color-success);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+        .success-msg.show {
+            display: block;
+        }
+        @media (max-width: 480px) {
+            .add-page-card {
+                padding: 24px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط تنقل مبسط -->
+    <header class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <span class="logo-icon">&lt;/&gt;</span>
+            <span>Code Snippet Hub</span>
+        </a>
+        <div class="navbar-actions">
+            <a href="index.html" class="btn btn-outline">🏠 العودة للرئيسية</a>
+            <button class="btn-icon" id="themeToggle" title="تبديل السمة">🌙</button>
+        </div>
+    </header>
+
+    <!-- محتوى الصفحة -->
+    <div class="add-page-container">
+        <div class="add-page-card">
+            <div class="add-page-header">
+                <h1>➕ إضافة كود جديد</h1>
+                <p>أدخل تفاصيل الكود الذي تريد حفظه</p>
+            </div>
+
+            <form id="addSnippetForm">
+                <div class="form-group">
+                    <label for="snippetTitle">العنوان *</label>
+                    <input type="text" id="snippetTitle" placeholder="مثال: دالة لجلب البيانات" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetLanguage">لغة البرمجة *</label>
+                    <select id="snippetLanguage" required>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="PHP">PHP</option>
+                        <option value="HTML">HTML</option>
+                        <option value="CSS">CSS</option>
+                        <option value="Java">Java</option>
+                        <option value="C++">C++</option>
+                        <option value="SQL">SQL</option>
+                        <option value="نص">نص عادي</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetCode">الكود *</label>
+                    <textarea id="snippetCode" rows="8" placeholder="ألصق الكود هنا..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetDesc">الوصف (اختياري)</label>
+                    <input type="text" id="snippetDesc" placeholder="ماذا يفعل هذا الكود؟" />
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetTags">الوسوم (اختياري، مفصولة بفاصلة)</label>
+                    <input type="text" id="snippetTags" placeholder="مثال: api, database, fetch" />
+                </div>
+
+                <div class="error-msg" id="addError">حدث خطأ ما</div>
+                <div class="success-msg" id="addSuccess">تم حفظ الكود بنجاح!</div>
+
+                <div class="form-actions">
+                    <a href="index.html" class="btn btn-outline">إلغاء</a>
+                    <button type="submit" class="btn btn-primary">💾 حفظ الكود</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- حاوية الـ Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- الربط مع ملفات الجافاسكريبت -->
+    <script src="js/pwa-init.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // ============================================
+        // التحقق من تسجيل الدخول
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!getCurrentUser()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            initTheme();
+
+            document.getElementById('themeToggle').addEventListener('click', function() {
+                const isLight = document.body.classList.toggle('light-theme');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                this.textContent = isLight ? '☀️' : '🌙';
+                showLocalNotification('🎨 تغيير السمة', isLight ? 'تم التبديل إلى الوضع الفاتح' : 'تم التبديل إلى الوضع الليلي');
+            });
+        });
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeToggle').textContent = '☀️';
+            } else {
+                document.body.classList.remove('light-theme');
+                document.getElementById('themeToggle').textContent = '🌙';
+            }
+        }
+
+        // ============================================
+        // إضافة كود جديد (إرسال البيانات إلى add.php)
+        // ============================================
+        document.getElementById('addSnippetForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('snippetTitle').value.trim();
+            const language = document.getElementById('snippetLanguage').value;
+            const code = document.getElementById('snippetCode').value;
+            const description = document.getElementById('snippetDesc').value.trim();
+            const tagsInput = document.getElementById('snippetTags').value;
+            const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
+            const errorEl = document.getElementById('addError');
+            const successEl = document.getElementById('addSuccess');
+
+            errorEl.classList.remove('show');
+            successEl.classList.remove('show');
+
+            if (!title || !language || !code) {
+                errorEl.textContent = 'الرجاء ملء جميع الحقول المطلوبة';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const payload = {
+                user_id: currentUser.id,
+                title: title,
+                language: language,
+                code: code,
+                description: description,
+                tags: tags
+            };
+
+            try {
+                const res = await fetch(window.API_BASE + 'add.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successEl.textContent = '✅ ' + data.message;
+                    successEl.classList.add('show');
+                    showLocalNotification('✅ تم الحفظ!', `تم حفظ الكود "${title}" بنجاح`);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1200);
+                } else {
+                    errorEl.textContent = '❌ ' + data.message;
+                    errorEl.classList.add('show');
+                }
+            } catch (err) {
+                errorEl.textContent = 'فشل الاتصال بالخادم';
+                errorEl.classList.add('show');
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>

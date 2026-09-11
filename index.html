@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta name="theme-color" content="#0B0E14" />
+    <meta name="description" content="Code Snippet Hub - منصة لحفظ وإدارة الأكواد البرمجية" />
+
+    <title>Code Snippet Hub</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/icons/icon-72x72.png" sizes="72x72" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png" />
+    <!-- تم حذف رابط manifest الخارجي، سيتم توليده ديناميكيًا عبر pwa-init.js -->
+</head>
+<body>
+
+    <!-- ==========================================
+    شريط التنقل (Navbar)
+    ========================================== -->
+    <header class="navbar">
+        <a href="#" class="navbar-brand">
+            <span class="logo-icon">&lt;/&gt;</span>
+            <span>Code Snippet Hub</span>
+        </a>
+
+        <div class="navbar-actions">
+            <!-- شريط البحث -->
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="ابحث عن كود..." />
+            </div>
+
+            <!-- أزرار التحكم -->
+            <button class="btn btn-primary" id="openAddModalBtn">+ جديد</button>
+            <button class="btn btn-outline notif-test-btn" id="testNotifBtn">🔔 إشعار</button>
+
+            <!-- زر تبديل السمة -->
+            <button class="btn-icon" id="themeToggle" title="تبديل السمة">🌙</button>
+
+            <!-- زر تصدير JSON -->
+            <button class="btn-icon btn-export" id="exportBtn" title="تصدير جميع الأكواد كـ JSON">📥</button>
+
+            <!-- زر الكتب -->
+            <a href="books.html" class="btn-icon" title="الكتب">📚</a>
+
+            <!-- زر الملف الشخصي -->
+            <a href="profile.html" class="btn-icon" title="الملف الشخصي">👤</a>
+
+            <!-- زر تسجيل الخروج -->
+            <button class="btn-icon" id="logoutBtn" title="تسجيل خروج">🚪</button>
+        </div>
+    </header>
+
+    <!-- ==========================================
+    أزرار التصفية حسب اللغة
+    ========================================== -->
+    <section class="filters-section" id="filtersSection">
+        <button class="filter-btn active" data-filter="all">الكل</button>
+        <button class="filter-btn" data-filter="JavaScript">JavaScript</button>
+        <button class="filter-btn" data-filter="Python">Python</button>
+        <button class="filter-btn" data-filter="PHP">PHP</button>
+        <button class="filter-btn" data-filter="HTML">HTML</button>
+        <button class="filter-btn" data-filter="CSS">CSS</button>
+        <button class="filter-btn" data-filter="Java">Java</button>
+        <button class="filter-btn" data-filter="C++">C++</button>
+        <button class="filter-btn" data-filter="SQL">SQL</button>
+    </section>
+
+    <!-- ==========================================
+    المحتوى الرئيسي
+    ========================================== -->
+    <main class="main-content">
+        <!-- شريط الإحصائيات -->
+        <div class="stats-bar" id="statsBar">
+            <span>📦 <strong id="totalCount">0</strong> كود</span>
+            <span>⭐ <strong id="favCount">0</strong> مفضلة</span>
+            <span>🏷️ <strong id="langCount">0</strong> لغة</span>
+        </div>
+
+        <div class="snippets-grid" id="snippetsGrid">
+            <!-- سيتم عرض البطاقات هنا بواسطة JavaScript -->
+        </div>
+    </main>
+
+    <!-- ==========================================
+    مودال إضافة / تعديل كود
+    ========================================== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <h2 id="modalTitle">إضافة كود جديد</h2>
+            <form id="snippetForm">
+                <input type="hidden" id="editId" value="" />
+
+                <div class="form-group">
+                    <label for="snippetTitle">العنوان *</label>
+                    <input type="text" id="snippetTitle" placeholder="مثال: دالة لجلب البيانات" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetLanguage">لغة البرمجة *</label>
+                    <select id="snippetLanguage" required>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="PHP">PHP</option>
+                        <option value="HTML">HTML</option>
+                        <option value="CSS">CSS</option>
+                        <option value="Java">Java</option>
+                        <option value="C++">C++</option>
+                        <option value="SQL">SQL</option>
+                        <option value="نص">نص عادي</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetCode">الكود *</label>
+                    <textarea id="snippetCode" placeholder="ألصق الكود هنا..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetDesc">الوصف (اختياري)</label>
+                    <input type="text" id="snippetDesc" placeholder="ماذا يفعل هذا الكود؟" />
+                </div>
+
+                <div class="form-group">
+                    <label for="snippetTags">الوسوم (اختياري، مفصولة بفاصلة)</label>
+                    <input type="text" id="snippetTags" placeholder="مثال: api, database, fetch" />
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="closeModalBtn">إلغاء</button>
+                    <button type="submit" class="btn btn-success" id="saveSnippetBtn">💾 حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    حاوية الـ Toast
+    ========================================== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ==========================================
+    ربط ملفات الجافاسكريبت
+    ========================================== -->
+    <script src="js/pwa-init.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // حماية الصفحة: منع الوصول بدون تسجيل دخول
+        (function() {
+            const user = localStorage.getItem('user_data');
+            if (!user) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة السمة المحفوظة
+            (function initTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                    document.getElementById('themeToggle').textContent = '☀️';
+                } else {
+                    document.body.classList.remove('light-theme');
+                    document.getElementById('themeToggle').textContent = '🌙';
+                }
+            })();
+        });
+
+        // زر تبديل السمة
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const isLight = document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            this.textContent = isLight ? '☀️' : '🌙';
+            showLocalNotification('🎨 تغيير السمة', isLight ? 'تم التبديل إلى الوضع الفاتح' : 'تم التبديل إلى الوضع الليلي');
+        });
+
+        // زر اختبار الإشعارات - مع طلب الإذن أولاً
+        document.getElementById('testNotifBtn').addEventListener('click', function() {
+            if (Notification.permission === 'default') {
+                requestNotificationPermission();
+            } else if (Notification.permission === 'granted') {
+                showLocalNotification('🔔 اختبار الإشعارات', 'تم الضغط على زر الإشعار! التطبيق يعمل بشكل ممتاز ✅');
+            } else {
+                alert('الرجاء تفعيل الإشعارات من إعدادات المتصفح');
+            }
+        });
+
+        // زر تصدير JSON
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            if (typeof exportSnippets === 'function') {
+                exportSnippets();
+            } else {
+                showToast('جاري تحميل البيانات...', 'info');
+            }
+        });
+
+        // تسجيل الخروج
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                localStorage.removeItem('user_data');
+                window.location.href = 'login.html';
+                showLocalNotification('👋 مع السلامة', 'تم تسجيل الخروج بنجاح');
+            }
+        });
+
+        // ==========================================
+        // عرض زر التثبيت يدوياً (PWA)
+        // ==========================================
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // إزالة أي زر تثبيت سابق
+            const oldBtn = document.getElementById('installBtn');
+            if (oldBtn) oldBtn.remove();
+
+            // إنشاء زر تثبيت وإضافته إلى شريط التنقل
+            const installBtn = document.createElement('button');
+            installBtn.textContent = '📲 تثبيت';
+            installBtn.className = 'btn btn-primary';
+            installBtn.style.marginRight = '8px';
+            installBtn.id = 'installBtn';
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const result = await deferredPrompt.userChoice;
+                    if (result.outcome === 'accepted') {
+                        console.log('تم تثبيت التطبيق');
+                        showToast('✅ تم تثبيت التطبيق بنجاح!', 'success');
+                    } else {
+                        console.log('تم رفض التثبيت');
+                    }
+                    deferredPrompt = null;
+                    installBtn.remove();
+                }
+            });
+
+            // إضافة الزر قبل الأزرار الأخرى في navbar-actions
+            const actions = document.querySelector('.navbar-actions');
+            actions.prepend(installBtn);
+        });
+
+        // إذا تم تثبيت التطبيق بالفعل
+        window.addEventListener('appinstalled', () => {
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.remove();
+            console.log('تم تثبيت التطبيق من قبل');
+        });
+    </script>
+
+</body>
+</html>

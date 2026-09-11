@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B0E14" />
+    <title>تسجيل الدخول - Code Snippet Hub</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/icons/icon-72x72.png" />
+
+    <style>
+        /* تنسيق خاص بصفحات المصادقة (مركزية) */
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            padding: 20px;
+        }
+        .auth-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+        .auth-card .logo-area {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .auth-card .logo-area .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--color-primary);
+            border-radius: var(--radius-md);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .auth-card .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .auth-card .logo-area p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .auth-card .form-group {
+            margin-bottom: 18px;
+        }
+        .auth-card label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+        .auth-card input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+        .auth-card input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+        .auth-card .btn-submit {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+        .auth-card .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .auth-card .auth-footer a {
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .auth-card .auth-footer a:hover {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+        .auth-card .error-msg {
+            color: var(--color-danger);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+        .auth-card .error-msg.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 32px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="logo-area">
+                <div class="logo-icon">&lt;/&gt;</div>
+                <h1>Code Snippet Hub</h1>
+                <p>سجل دخولك للوصول إلى أكوادك</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">البريد الإلكتروني</label>
+                    <input type="email" id="loginEmail" placeholder="example@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">كلمة المرور</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required />
+                </div>
+
+                <div class="error-msg" id="loginError">خطأ في البريد أو كلمة المرور</div>
+
+                <button type="submit" class="btn btn-primary btn-submit">🚀 تسجيل الدخول</button>
+            </form>
+
+            <div class="auth-footer">
+                ليس لديك حساب؟ <a href="register.html">إنشاء حساب جديد</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pwa-init.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // التحقق: إذا كان المستخدم مسجلاً بالفعل، نوجهه إلى الصفحة الرئيسية
+        document.addEventListener('DOMContentLoaded', function() {
+            if (getCurrentUser()) {
+                window.location.href = 'index.html';
+                return;
+            }
+        });
+
+        // معالجة نموذج تسجيل الدخول
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            errorEl.classList.remove('show');
+
+            if (!email || !password) {
+                errorEl.textContent = 'الرجاء ملء جميع الحقول';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            const result = await loginUser(email, password);
+            if (result.success) {
+                // إشعار ترحيب
+                showLocalNotification('👋 مرحباً ' + result.user.username, 'تم تسجيل الدخول بنجاح!');
+                window.location.href = 'index.html';
+            } else {
+                errorEl.textContent = result.message || 'فشل تسجيل الدخول';
+                errorEl.classList.add('show');
+            }
+        });
+    </script>
+
+</body>
+</html>

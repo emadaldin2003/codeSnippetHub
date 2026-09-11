@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0E14">
+    <title>الكتب - Code Snippet Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/icons/icon-72x72.png">
+    <style>
+        /* تنسيق إضافي لصفحة الكتب */
+        .book-card .card-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .book-card .file-size {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        .book-card .download-btn {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <span class="logo-icon">&lt;/&gt;</span>
+            <span>Code Snippet Hub</span>
+        </a>
+        <div class="navbar-actions">
+            <a href="index.html" class="btn btn-outline">🏠 الرئيسية</a>
+            <button class="btn-icon" id="themeToggle" title="تبديل السمة">🌙</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h1>📚 مكتبة الكتب</h1>
+            <span id="bookCount" style="color: var(--text-secondary);">0 كتاب</span>
+        </div>
+        <div id="booksGrid" class="snippets-grid">
+            <!-- سيتم عرض الكتب هنا -->
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/pwa-init.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        // دالة عرض Toast (نسخة مبسطة)
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        async function loadBooks() {
+            const grid = document.getElementById('booksGrid');
+            const countSpan = document.getElementById('bookCount');
+            try {
+                const res = await fetch('./php/api/books.php');
+                const data = await res.json();
+                if (data.success && data.books.length > 0) {
+                    let html = '';
+                    data.books.forEach(book => {
+                        const sizeKB = (book.size / 1024).toFixed(1);
+                        const sizeMB = (book.size / (1024 * 1024)).toFixed(2);
+                        const sizeDisplay = book.size > 1024 * 1024 ? `${sizeMB} ميجابايت` : `${sizeKB} كيلوبايت`;
+                        html += `
+                            <div class="snippet-card book-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">📄 ${book.name}</h3>
+                                </div>
+                                <div class="file-size">📦 الحجم: ${sizeDisplay}</div>
+                                <div class="card-actions">
+                                    <a href="${book.url}" download class="btn btn-primary download-btn">⬇️ تحميل</a>
+                                    <a href="${book.url}" target="_blank" class="btn btn-outline">👁️ معاينة</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    grid.innerHTML = html;
+                    countSpan.textContent = `${data.books.length} كتاب`;
+                } else {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            <h3>لا توجد كتب حالياً</h3>
+                            <p>قم بإضافة بعض الملفات في مجلد <code>books</code> في جذر المشروع.</p>
+                        </div>
+                    `;
+                    countSpan.textContent = '0 كتاب';
+                }
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>حدث خطأ في تحميل الكتب</h3>
+                        <p>يرجى التأكد من أن مجلد الكتب موجود وخادم PHP يعمل.</p>
+                    </div>
+                `;
+                countSpan.textContent = '0 كتاب';
+                showToast('فشل تحميل الكتب', 'error');
+            }
+        }
+
+        // تحميل الكتب عند فتح الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBooks();
+
+            // تهيئة السمة
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeToggle').textContent = '☀️';
+            } else {
+                document.body.classList.remove('light-theme');
+                document.getElementById('themeToggle').textContent = '🌙';
+            }
+
+            // زر تبديل السمة
+            document.getElementById('themeToggle').addEventListener('click', function() {
+                const isLight = document.body.classList.toggle('light-theme');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                this.textContent = isLight ? '☀️' : '🌙';
+                showToast(isLight ? 'تم التبديل إلى الوضع الفاتح' : 'تم التبديل إلى الوضع الليلي', 'info');
+            });
+        });
+    </script>
+
+</body>
+</html>

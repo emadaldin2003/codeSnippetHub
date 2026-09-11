@@ -1,0 +1,56 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "username": "ahmed",
+            "email": "ahmed@example.com",
+            "password": "123456"
+        },
+        {
+            "id": 2,
+            "username": "\u0639\u0645\u0627\u062f",
+            "email": "test@gmail.cpm",
+            "password": "123456"
+        },
+        {
+            "id": 3,
+            "username": "\u0639\u0645\u0627\u062f",
+            "email": "emad@gmail.com",
+            "password": "123456"
+        },
+        {
+            "id": 4,
+            "username": "\u0639\u0645\u0627\u062f",
+            "email": "em@gmail.com",
+            "password": "123456"
+        }
+    ],
+    "snippets": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "title": "\u0645\u062b\u0627\u0644 \u0639\u0644\u0649 \u0643\u0648\u062f PHP",
+            "language": "PHP",
+            "code": "<?php\necho '\u0645\u0631\u062d\u0628\u0627\u064b \u0628\u0627\u0644\u0639\u0627\u0644\u0645!';\n?>",
+            "description": "\u0647\u0630\u0627 \u0643\u0648\u062f \u062a\u062c\u0631\u064a\u0628\u064a \u0644\u0639\u0631\u0636 Hello World",
+            "tags": [
+                "php",
+                "\u0628\u062f\u0627\u064a\u0629"
+            ],
+            "is_favorite": true,
+            "created_at": "2026-08-08 10:00:00"
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "title": "\u0628\u0633\u0634\u0628",
+            "language": "JavaScript",
+            "code": "\u0645\u0646\u0645\u0646\u0645",
+            "description": "",
+            "tags": [],
+            "is_favorite": false,
+            "created_at": "2026-09-03 18:10:38"
+        }
+    ],
+    "subscriptions": []
+}

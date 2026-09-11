@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B0E14" />
+    <title>إنشاء حساب - Code Snippet Hub</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/icons/icon-72x72.png" />
+
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            padding: 20px;
+        }
+        .auth-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+        .auth-card .logo-area {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .auth-card .logo-area .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--color-primary);
+            border-radius: var(--radius-md);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .auth-card .logo-area h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .auth-card .logo-area p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .auth-card .form-group {
+            margin-bottom: 16px;
+        }
+        .auth-card label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+        .auth-card input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+        .auth-card input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+        .auth-card .btn-submit {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+        .auth-card .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .auth-card .auth-footer a {
+            color: var(--color-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .auth-card .auth-footer a:hover {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+        .auth-card .error-msg {
+            color: var(--color-danger);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+        .auth-card .error-msg.show {
+            display: block;
+        }
+        .auth-card .success-msg {
+            color: var(--color-success);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+        .auth-card .success-msg.show {
+            display: block;
+        }
+        .password-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 32px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="logo-area">
+                <div class="logo-icon">&lt;/&gt;</div>
+                <h1>انضم إلينا</h1>
+                <p>أنشئ حسابك مجاناً وابدأ بحفظ أكوادك</p>
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regUsername">اسم المستخدم</label>
+                    <input type="text" id="regUsername" placeholder="أحمد محمد" required />
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">البريد الإلكتروني</label>
+                    <input type="email" id="regEmail" placeholder="example@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">كلمة المرور</label>
+                    <input type="password" id="regPassword" placeholder="••••••••" required />
+                    <div class="password-hint">يجب أن تكون 6 أحرف على الأقل</div>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirm">تأكيد كلمة المرور</label>
+                    <input type="password" id="regConfirm" placeholder="••••••••" required />
+                </div>
+
+                <div class="error-msg" id="regError">حدث خطأ ما</div>
+                <div class="success-msg" id="regSuccess">تم إنشاء الحساب بنجاح!</div>
+
+                <button type="submit" class="btn btn-success btn-submit">✨ إنشاء الحساب</button>
+            </form>
+
+            <div class="auth-footer">
+                لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pwa-init.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (getCurrentUser()) {
+                window.location.href = 'index.html';
+                return;
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+            const errorEl = document.getElementById('regError');
+            const successEl = document.getElementById('regSuccess');
+
+            errorEl.classList.remove('show');
+            successEl.classList.remove('show');
+
+            if (!username || !email || !password || !confirm) {
+                errorEl.textContent = 'الرجاء ملء جميع الحقول';
+                errorEl.classList.add('show');
+                return;
+            }
+            if (password.length < 6) {
+                errorEl.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                errorEl.classList.add('show');
+                return;
+            }
+            if (password !== confirm) {
+                errorEl.textContent = 'كلمة المرور غير متطابقة مع التأكيد';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            const result = await registerUser(username, email, password);
+            if (result.success) {
+                successEl.textContent = '✅ تم إنشاء الحساب وتسجيل الدخول تلقائياً!';
+                successEl.classList.add('show');
+                showLocalNotification('🎉 مرحباً ' + username, 'تم إنشاء حسابك بنجاح!');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                errorEl.textContent = result.message || 'فشل إنشاء الحساب';
+                errorEl.classList.add('show');
+            }
+        });
+    </script>
+
+</body>
+</html>

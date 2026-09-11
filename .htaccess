@@ -1,0 +1,36 @@
+# ==========================================
+# إعدادات .htaccess لـ Code Snippet Hub
+# ==========================================
+
+# ضبط أنواع MIME الصحيحة
+AddType application/manifest+json .json .webmanifest
+AddType application/javascript .js
+AddType application/javascript .mjs
+
+# السماح بالوصول إلى ملفات الكتب
+<FilesMatch "\.(pdf|epub|mobi|docx|txt)$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Content-Disposition "inline"
+    Header set X-Content-Type-Options "nosniff"
+</FilesMatch>
+
+# السماح للـ Service Worker بالعمل على النطاق كامل
+<Files "sw.js">
+    Header set Service-Worker-Allowed "/"
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+</Files>
+
+# منع تخزين manifest و HTML في الكاش (لضمان تحديث PWA)
+<FilesMatch "\.(html|json|webmanifest)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</FilesMatch>
+
+# تفعيل ضغط Gzip لتحسين الأداء
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json
+</IfModule>
+
+# صفحة الخطأ الافتراضية
+ErrorDocument 404 /offline.html
