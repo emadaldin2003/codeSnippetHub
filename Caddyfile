@@ -1,0 +1,14 @@
+{
+	admin off
+	auto_https off
+}
+
+:{$PORT} {
+	root * .
+
+	# تقديم ملفات PHP عبر FastCGI
+	php_fastcgi localhost:9000
+
+	# تقديم الملفات الثابتة (HTML, CSS, JS, PDF...)
+	file_server
+}
