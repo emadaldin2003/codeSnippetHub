@@ -1,26 +1,13 @@
 FROM php:8.2-apache
 
-# تثبيت جميع المكتبات المطلوبة لبناء امتدادات PHP
-RUN apt-get update && apt-get install -y \
-    libonig-dev \
-    zlib1g-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libwebp-dev \
-    libzip-dev \
-    libxml2-dev \
-    libcurl4-openssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+# تثبيت مكتبة oniguruma (مطلوبة لامتداد mbstring فقط)
+RUN apt-get update && apt-get install -y libonig-dev && rm -rf /var/lib/apt/lists/*
 
 # تفعيل mod_rewrite
 RUN a2enmod rewrite
 
-# تكوين GD مع دعم JPEG و FreeType
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-
-# تثبيت امتدادات PHP
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+# تثبيت امتداد mbstring فقط (لمعالجة النصوص العربية)
+RUN docker-php-ext-install mbstring
 
 # نسخ ملفات المشروع
 COPY . /var/www/html/
