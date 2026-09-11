@@ -1,20 +1,19 @@
 FROM php:8.2-apache
 
-# تفعيل mod_rewrite (مفيد للمسارات)
+# تثبيت مكتبة oniguruma (مطلوبة لامتداد mbstring)
+RUN apt-get update && apt-get install -y libonig-dev && rm -rf /var/lib/apt/lists/*
+
+# تفعيل mod_rewrite
 RUN a2enmod rewrite
 
-# تثبيت الامتدادات المطلوبة
+# تثبيت امتدادات PHP
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
 
-# نسخ جميع ملفات المشروع إلى مجلد الويب
+# نسخ ملفات المشروع
 COPY . /var/www/html/
 
-# منح الصلاحيات المناسبة لمجلد الكتب والبيانات
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
+# ضبط الصلاحيات
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# فتح المنفذ 80 (المنفذ الافتراضي لـ Apache)
 EXPOSE 80
-
-# تشغيل Apache في المقدمة
 CMD ["apache2-foreground"]
